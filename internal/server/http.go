@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -36,10 +37,6 @@ type ProduceResponse struct {
 	Offset uint64 `json:"offset"`
 }
 
-type ConsumeRequest struct {
-	Offset uint64 `json:"offset"`
-}
-
 type ConsumeResponse struct {
 	Record Record `json:"record"`
 }
@@ -69,13 +66,21 @@ func (s *httpServer) handleProduce(w http.ResponseWriter, r *http.Request) {
 func (s *httpServer) handleConsume(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	var req ConsumeRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
+	// get offset from query string
+	q := r.URL.Query()
+	offset := q.Get("offset")
+	if offset == "" {
+		http.Error(w, "missing offset query parameter", http.StatusBadRequest)
+		return
+	}
+	// convert offset to uint64
+	off, err := strconv.ParseUint(offset, 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	record, err := s.Log.Read(req.Offset)
+	// read record from log
+	record, err := s.Log.Read(off)
 	if err == ErrOffsetNotFound {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

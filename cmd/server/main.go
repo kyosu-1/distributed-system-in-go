@@ -8,5 +8,8 @@ import (
 
 func main() {
 	srv := server.NewHTTPServer(":8080")
+	// ouput starting message
+	log.Println("starting server on", srv.Addr)
+	// start server
 	log.Fatal(srv.ListenAndServe())
 }

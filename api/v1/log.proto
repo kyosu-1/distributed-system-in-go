@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package log.v1;
+
+option go_package = "github.com/kyosu-1/distributed-system-in-go/api/v1/log;logv1";
+
+message Record {
+    bytes value = 1;
+    uint64 offset = 2;
+}

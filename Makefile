@@ -1,6 +1,6 @@
 .PHONY: go-fix-lint
 go-fix-lint:
-	find . -print | grep --regex '.*\.go$$' | xargs goimports -w -local "github.com/nagaseitteam/it-lime-backend"
+	find . -print | grep --regex '.*\.go$$' | xargs goimports -w -local "github.com/kyosu-1/distributed-system-in-go"
 
 .PHONY: go-check-lint
 go-check-lint:
